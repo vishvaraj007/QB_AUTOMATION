@@ -47,7 +47,7 @@ public class QB_class {
 				wait.until(ExpectedConditions
 						.presenceOfElementLocated(By.xpath("//input[@data-testid='VerifyOtpInput']")));
 				System.out.println("Waiting 20 seconds for OTP entry...");
-				Thread.sleep(20000); // ⚠️ Replace with automated OTP fetch if needed
+				Thread.sleep(20000); // ⚠ Replace with automated OTP fetch if needed
 
 				wait.until(ExpectedConditions
 						.elementToBeClickable(By.xpath("//button[@data-testid='VerifyOtpSubmitButton']"))).click();
@@ -115,12 +115,12 @@ public class QB_class {
 		driver.findElement(By.xpath("//button[@aria-label='Close']")).click();
 		System.out.println("Invoice page closed.");
 
-		// ✅ Process Completed
+		// Process Completed
 		waitForPageLoad(driver);
-		System.out.println("✅ Invoice created successfully.");
+		System.out.println(" Invoice created successfully.");
 		Thread.sleep(4000);
 		driver.quit();
-		System.out.println("🔒 Browser closed.");
+		System.out.println(" Browser closed.");
 	}
 
 	// 📌 Utility Method: Wait for JS page load
