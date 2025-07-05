@@ -15,9 +15,7 @@ public class QB_class {
 
 	public static void main(String[] args) throws InterruptedException {
 
-		// ============================
-		// 1) Setup WebDriver and Wait
-		// ============================
+		// 1️⃣ Initialize WebDriver and Wait
 		WebDriver driver = new ChromeDriver();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 		JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -25,88 +23,62 @@ public class QB_class {
 		driver.manage().window().maximize();
 		driver.get(
 				"https://accounts.intuit.com/app/sign-in?app_group=QBO&asset_alias=Intuit.devx.devx&app_environment=prod");
-
 		waitForPageLoad(driver);
 
-		// ========================
-		// 2) Login to QuickBooks
-		// ========================
-		WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-				By.xpath("//input[@id='iux-identifier-first-international-email-user-id-input']")));
-		emailField.sendKeys("vishvaraj.codexlancers@gmail.com");
+		// 2️⃣ Login to QuickBooks
+		wait.until(ExpectedConditions
+				.visibilityOfElementLocated(By.id("iux-identifier-first-international-email-user-id-input")))
+				.sendKeys("vishvaraj.codexlancers@gmail.com");
 
-		WebElement submitButton = wait
-				.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@type='submit']")));
-		submitButton.click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@type='submit']"))).click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("iux-password-confirmation-password")))
+				.sendKeys("Welcome@007");
 
-		WebElement passwordField = wait.until(ExpectedConditions
-				.visibilityOfElementLocated(By.xpath("//input[@id='iux-password-confirmation-password']")));
-		passwordField.sendKeys("Welcome@007");
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'Continue')]"))).click();
 
-		WebElement continueButton = wait
-				.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'Continue')]")));
-		continueButton.click();
-
-		// ==========================
-		// 3) OTP Page (Optional)
-		// ==========================
+		// 3️⃣ OTP Handling (if appears)
 		try {
-			WebElement otpButton = wait.until(ExpectedConditions
+			WebElement otpBtn = wait.until(ExpectedConditions
 					.presenceOfElementLocated(By.xpath("//button[@data-testid='challengePickerOption_SMS_OTP']")));
-			if (otpButton.isDisplayed()) {
+			if (otpBtn.isDisplayed()) {
 				System.out.println("OTP page detected.");
-				otpButton.click();
+				otpBtn.click();
 
-				WebElement otpInput = wait.until(ExpectedConditions
+				wait.until(ExpectedConditions
 						.presenceOfElementLocated(By.xpath("//input[@data-testid='VerifyOtpInput']")));
-				System.out.println("Waiting 20 seconds for OTP...");
-				Thread.sleep(20000); // ⚠️ Replace with actual OTP handling in future
+				System.out.println("Waiting 20 seconds for OTP entry...");
+				Thread.sleep(20000); // ⚠️ Replace with automated OTP fetch if needed
 
-				WebElement verifyOtpButton = wait.until(ExpectedConditions
-						.elementToBeClickable(By.xpath("//button[@data-testid='VerifyOtpSubmitButton']")));
-				verifyOtpButton.click();
+				wait.until(ExpectedConditions
+						.elementToBeClickable(By.xpath("//button[@data-testid='VerifyOtpSubmitButton']"))).click();
 			}
 		} catch (Exception e) {
 			System.out.println("OTP page did not appear.");
 		}
 
 		waitForPageLoad(driver);
-
-		// Wait until any loading spinner disappears
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(
 				By.xpath("//*[@id='web-shell-spinner' or @class='has-background hide-spinner']")));
 
-		// ==============================
-		// 4) Navigate to Invoice Module
-		// ==============================
-		WebElement salesMenu = wait
-				.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[normalize-space()='Sales']")));
-		salesMenu.click();
-		System.out.println("Sales selected from side menu.");
+		// 4️⃣ Navigate to Invoice Section
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[normalize-space()='Sales']"))).click();
+		System.out.println("Sales selected.");
 
 		waitForPageLoad(driver);
+		wait.until(ExpectedConditions.elementToBeClickable(
+				By.xpath("(//span[@class='tabbedNavItemLabel'][normalize-space()='Invoices'])[1]"))).click();
+		System.out.println("Invoice tab opened.");
 
-		WebElement invoicesTab = wait.until(ExpectedConditions.elementToBeClickable(
-				By.xpath("(//span[@class='tabbedNavItemLabel'][normalize-space()='Invoices'])[1]")));
-		invoicesTab.click();
-		System.out.println("Invoice tab selected.");
-
-		// ==============================
-		// 5) Click Create Invoice
-		// ==============================
+		// 5️⃣ Click "Create Invoice"
 		waitForPageLoad(driver);
+		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[normalize-space()='Create invoice']")))
+				.click();
+		System.out.println("Create Invoice clicked.");
 
-		WebElement createInvoiceButton = wait
-				.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[normalize-space()='Create invoice']")));
-		createInvoiceButton.click();
-		System.out.println("Create invoice button clicked.");
-
-		// ==============================
-		// 6) Select Customer
-		// ==============================
-		Thread.sleep(5000); // Optional: wait for modal to fully open
-		WebElement customerDropdown = wait.until(
-				ExpectedConditions.elementToBeClickable(By.xpath("//input[@id='idsDropdownTypeaheadTextField2']")));
+		// 6️⃣ Select Customer
+		Thread.sleep(5000); // Ensure modal is fully loaded
+		WebElement customerDropdown = wait
+				.until(ExpectedConditions.elementToBeClickable(By.id("idsDropdownTypeaheadTextField2")));
 		customerDropdown.click();
 
 		WebElement customer = wait
@@ -114,65 +86,44 @@ public class QB_class {
 		customer.click();
 		System.out.println("Customer selected.");
 
-		// ==============================
-		// 7) Close Side Panel (if open)
-		// ==============================
-		WebElement closebar = wait.until(ExpectedConditions.presenceOfElementLocated(
-				By.xpath("//div[@class='txp-capability-closeBtn-Q9kg2']//button[@aria-label='Close']")));
-		closebar.click();
+		// 7️⃣ Close Right Sidebar if Visible
+		wait.until(ExpectedConditions.elementToBeClickable(
+				By.xpath("//div[@class='txp-capability-closeBtn-Q9kg2']//button[@aria-label='Close']"))).click();
 		System.out.println("Sidebar closed.");
 
-		// ==============================
-		// 8) Select Item from Dropdown
-		// ==============================
-		WebElement itemBox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//td[@role='cell'])[4]")));
-		System.out.println("Hovering over item cell...");
-
-		Actions actions = new Actions(driver);
-		actions.moveToElement(itemBox).build().perform();
-		itemBox.click();
+		// 8️⃣ Select Item (e.g., 'Design')
+		WebElement itemCell = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//td[@role='cell'])[4]")));
+		new Actions(driver).moveToElement(itemCell).click().perform();
 		System.out.println("Item cell clicked.");
 
-		// Re-locate to avoid stale element reference
 		WebElement designItem = wait
 				.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[normalize-space()='Design']")));
 		js.executeScript("arguments[0].scrollIntoView(true);", designItem);
-		Thread.sleep(500); // Optional short wait
+		Thread.sleep(500); // Short delay
 		js.executeScript("arguments[0].click();", designItem);
 		System.out.println("Item 'Design' selected.");
 
-		// ==============================
-		// 9) Click Review and Send
-		// ==============================
-		WebElement reviewAndSendBtn = wait.until(
-				ExpectedConditions.elementToBeClickable(By.xpath("//span[normalize-space()='Review and send']")));
-		Thread.sleep(3000); // Optional UI wait
-		reviewAndSendBtn.click();
-		System.out.println("Review and send button clicked.");
+		// 9️⃣ Save
+		Thread.sleep(2000); // Optional UI buffer
+		WebElement reviewAndSend = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+				"//button[@class='idsTSButton idsF Button-button-47fde43 Button-size-medium-6e55314 Button-purpose-standard-09f745b Button-priority-secondary-f585bb5 SplitButton-buttonWrapper-3d5c01c SplitButton-medium-50be0d0']")));
+		reviewAndSend.click();
+		System.out.println("Invoice Save.");
 
+		// 🔟 Close the Invoice Page after Save
+		Thread.sleep(4000); // Let invoice submit before closing
+		driver.findElement(By.xpath("//button[@aria-label='Close']")).click();
+		System.out.println("Invoice page closed.");
+
+		// ✅ Process Completed
 		waitForPageLoad(driver);
-
-		// ==============================
-		// 10) Click Send Invoice
-		// ==============================
-		WebElement sendInvoiceBtn = wait
-				.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[normalize-space()='Send invoice']")));
-		js.executeScript("arguments[0].scrollIntoView(true);", sendInvoiceBtn);
-		Thread.sleep(1000); // Optional small wait
-		js.executeScript("arguments[0].click()", sendInvoiceBtn);
-		System.out.println("Send invoice button clicked using JS.");
-
-		// ==============================
-		// 11) End of Process
-		// ==============================
-		System.out.println("✅ Invoice successfully created.");
+		System.out.println("✅ Invoice created successfully.");
+		Thread.sleep(4000);
 		driver.quit();
-		System.out.println("Browser closed.");
+		System.out.println("🔒 Browser closed.");
 	}
 
-	// ==============================
-	// Utility: Wait for full page load
-	// ==============================
+	// 📌 Utility Method: Wait for JS page load
 	private static void waitForPageLoad(WebDriver driver) {
 		new WebDriverWait(driver, Duration.ofSeconds(30)).until(webDriver -> ((JavascriptExecutor) webDriver)
 				.executeScript("return document.readyState").equals("complete"));
