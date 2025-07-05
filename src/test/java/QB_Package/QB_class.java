@@ -121,6 +121,7 @@ public class QB_class {
 		Thread.sleep(4000);
 		driver.quit();
 		System.out.println(" Browser closed.");
+		System.out.println(" Congratulation.");
 	}
 
 	// 📌 Utility Method: Wait for JS page load
